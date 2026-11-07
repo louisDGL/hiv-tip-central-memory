@@ -31,47 +31,58 @@ Arkin, *J. Virol.* **77**, 10028 (2003).
 
 ## Where things stand
 
-Two gates have been run. Both came back against the proposal as written — see
-**[FINDINGS.md](FINDINGS.md)**.
+Two inherited claims have been re-derived from the data rather than quoted.
+Both results, with their sensitivity analyses and caveats, are in
+**[CONCLUSIONS.md](CONCLUSIONS.md)**.
 
-- `d_M = ρ` survives the human literature, but the inflow term `φ` has **never
-  been measured in humans**. The one quantitative analogue is mouse, where
-  `φ ≈ ρ` and the design fails by 7×.
-- `A = 12` is not supported by the base paper's own MCMC posterior, which puts
-  `A = P² ≈ 2.50` (95% 2.07–3.43). The `ε` budget falls from 13.75% to 1.87%,
-  and the latent reservoir — the anchor for what is achievable — sits outside
-  the bound in 100% of posterior draws.
+- **`R0^TIP` is 4–11, not "about 1".** Reading the published 5–10% multiply-
+  infected prevalence directly as a per-cell probability throws away a 340×
+  lifetime ratio. Corrected, the published construct is not marginal in
+  humans — so the design's motivation is the **floor** (38× lower), not the
+  invasion threshold.
+- **Fig 4D's separation is real but does not exclude the basic model.** It
+  survives window matching, yet 4 000 draws from the paper's own priors land
+  in the treated band 8.9% of the time. Prior-predictive odds 8.3 : 1 —
+  substantial evidence, not an exclusion under all parameters.
 
-The project is not sunk by this; it is relocated. The result becomes the
-admissible region over `(A, φ)` rather than a bound on `ε`.
+Two feasibility axes remain unmeasured and are reported as a region rather
+than a number: `A`, which is a ceiling from an assay that *arranges*
+superinfection, and `φ`, the T_SCM → T_CM inflow, which has never been
+quantified in humans.
 
 ## Layout
 
 | Path | |
 |---|---|
-| [PIPELINE.md](PIPELINE.md) | execution plan, stage by stage |
-| [FINDINGS.md](FINDINGS.md) | gate results with the numbers |
-| [m2-proposal-feedback.md](m2-proposal-feedback.md) | the review this responds to |
+| [CONCLUSIONS.md](CONCLUSIONS.md) | S1 and S2 results, sensitivity, caveats |
 | [src/tip/params.py](src/tip/params.py) | Table 1 — single source of truth |
-| [src/tip/model.py](src/tip/model.py) | six-state RHS, equilibrium, threshold |
-| [analysis/](analysis/) | the gate scripts |
-| [tests/](tests/) | hand-verified numbers, frozen as regressions |
+| [src/tip/model.py](src/tip/model.py) | six-state TIP model |
+| [src/tip/boundary.py](src/tip/boundary.py) | threshold + feasible region, derived three ways |
+| [src/tip/basic.py](src/tip/basic.py) | three-state basic model, Fig 4D observable |
+| [src/tip/data.py](src/tip/data.py) | macaque viral-load loader |
+| [analysis/](analysis/) | the runnable studies |
+| [tests/](tests/) | 58 tests; hand-verified numbers frozen as regressions |
 
 ## Running
 
 ```bash
 pip install -r requirements.txt
 
-python analysis/gate_dm_vs_rho.py     # the φ/ε budget
-python analysis/a_from_posterior.py   # A from the paper's posterior
-python -m pytest tests/ -q            # 11 anchors
+python analysis/a1_superinfection.py   # S1: p, R0^TIP, the prevalence conversion
+python analysis/gate_dm_vs_rho.py      # the φ/ε budget
+python analysis/s3_budget_surface.py   # the (A, φ) region -> figures/
+python -m pytest tests/ -q             # 58 tests
 ```
 
-`a_from_posterior.py` needs the upstream repository:
+`s2_verification.py` and `a_from_posterior.py` need the upstream repository
+for its data and its posterior:
 
 ```bash
 git clone https://github.com/khetanneha/HIV-SIV-TIP-Modeling.git \
           external/HIV-SIV-TIP-Modeling
+
+python analysis/s2_verification.py     # S2: does Fig 4D's statistic discriminate
+python analysis/a_from_posterior.py    # A read off the paper's own MCMC
 ```
 
 It is LGPL-3.0 and is read for reference only — the model here is reimplemented
