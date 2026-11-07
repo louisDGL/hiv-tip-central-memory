@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# cloned upstream code, not ours to version
+external/
+
+# working documents - roadmap, pipeline, findings, and the private review
+PIPELINE.md
+FINDINGS.md
+m2-proposal-feedback.md
+
+# generated
+figures/*.png
+figures/*.pdf
+results/*.csv
+results/*.json
