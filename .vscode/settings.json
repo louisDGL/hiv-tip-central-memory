@@ -1,0 +1,26 @@
+{
+  // The upstream clone in external/ is a git repository of its own
+  // (khetanneha/HIV-SIV-TIP-Modeling). Without this, VS Code's Source Control
+  // panel and the GitHub extension pick it up alongside - and sometimes
+  // instead of - this project's repository. It is reference material, not a
+  // submodule and not ours to version.
+  "git.ignoredRepositories": [
+    "external/HIV-SIV-TIP-Modeling"
+  ],
+  "git.detectSubmodules": false,
+  "git.autoRepositoryDetection": "openEditors",
+
+  // src/ is the import root; analysis scripts add it to sys.path at runtime.
+  "python.analysis.extraPaths": [
+    "src"
+  ],
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
+
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true
+  }
+}

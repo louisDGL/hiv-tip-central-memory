@@ -162,6 +162,40 @@ def main() -> int:
     assert abs(r0_code - p_code * p.A) < 1e-9
     print()
 
+    print("  SENSITIVITY - IS 'R0 >> 1' ROBUST, OR AN ARTEFACT OF q AND delta?")
+    print("  " + "-" * 64)
+    print("  The conversion rests on two inputs that are not tightly pinned:")
+    print("  the prevalence q and the infected-cell loss rate delta. Both are")
+    print("  swept well past their cited ranges. The conclusion has to survive")
+    print("  the worst corner, not just the central estimate.")
+    print()
+    q_grid = (0.02, 0.05, 0.10, 0.20)
+    delta_grid = (0.5, 0.7, 0.88, 1.0)
+    print("     delta \\ q" + "".join(f"{q:>10.2f}" for q in q_grid))
+    print("  " + "-" * 64)
+    worst = (np.inf, None)
+    for dl in delta_grid:
+        cells = []
+        for q in q_grid:
+            s = force_from_prevalence(q, dl)
+            r0 = p_from_force(s, loss_published) * p.A
+            cells.append(f"{r0:>10.2f}")
+            if r0 < worst[0]:
+                worst = (r0, (q, dl))
+        print(f"  {dl:9.2f}  " + "".join(cells))
+    print()
+    print(f"  Worst corner: q={worst[1][0]:.2f}, delta={worst[1][1]:.2f}"
+          f"  ->  R0 = {worst[0]:.2f} for the PUBLISHED construct at A = {p.A:.0f}.")
+    s_w = force_from_prevalence(worst[1][0], worst[1][1])
+    A_need = 1.0 / p_from_force(s_w, loss_published)
+    print(f"  Even there, R0 clears 1 for any A above {A_need:.2f}.")
+    print()
+    print("  So 'R0^TIP ~ 1 in humans' is not recoverable from any plausible")
+    print("  (q, delta). It comes only from reading the prevalence q directly")
+    print("  as the per-cell probability p, which is the one reading the")
+    print("  lifetime argument rules out.")
+    print()
+
     print("  R0 AT SET POINT IS NOT THE MARGIN THE DESIGN BUYS")
     print("  " + "-" * 64)
     print("  M1 motivates the design by the published TIP sitting at")
